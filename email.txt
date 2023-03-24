@@ -1,0 +1,25 @@
+Hello!
+
+I attach one year of data that I am running regressions on. It is not large – about 200 countries by 21 variables: 6 dependent variables, 13 triad (independent) variables, and 2 control variables. One of the control variables I build from the attached data – per capita GDP.  I have the same dataset for about 17 years (and slowly adding more).
+
+The dependent variables are 6 separate index values published annually by the World Bank covering different dimensions of national stability. Each index has a continuous values from around -2.5 to +2.5. Higher values are better (more stable) countries. They indexes are:
+
+Voice and accountability
+
+Political stability
+
+Government effectiveness
+
+Regulatory quality
+
+Rule of law
+
+Control of corruption
+ 
+For each index, I wanted to see if any triads are related to higher index scores. The literature predicts that triad 13 should be positively related to stability and triad 6 should be negatively related. Beyond that, there is almost no literature. There is some literature that says triad 7 is positively related to improved regulatory networks. Beyond those 3 triads, there is basically no literature that I know of.
+
+My first thought was just to do a simple correlation between each triad separately. But I think it will make a better paper to do also a multivariate regression. Here is where I need help though. For me it seems like 13 independent variables is too many, but I don’t know the correct way to reduce this number. I could find no multicollinearity among the variables. Also, these are not truly independent variables. As you pointed out, when one triad increases, others must decrease (As a percent of total).
+
+If you are interested to work on this, you would of course be welcome to be a co-author, but also, if you are in need of some summer salary we can do that also! Let me know what you think,
+
+Shade
