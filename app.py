@@ -9,12 +9,10 @@ st.title('National Stability Data')
 st.write('enrico.borriello@asu.edu - Latest update: Mar 24, 2023')
 
 
-f = open('email.txt', 'r')
-content = f.read()
-
-
-with st.expander("Shade's email"):
-    st.write(content)
+#f = open('email.txt', 'r')
+#content = f.read()
+#with st.expander("Shade's email"):
+#    st.write(content)
 
 
 st.sidebar.subheader('Input CSV')
