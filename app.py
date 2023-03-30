@@ -125,11 +125,13 @@ if uploaded_file is not None:
   plt.title(str(measure)+'      '+'RMSE = '+str(round(RMSE,3)))
 
 with col1:
-  st.write(fig_lin_reg)
+  if uploaded_file is not None:
+    st.write(fig_lin_reg)
 
 
 with col2:
-  st.empty()
+  if uploaded_file is not None:
+    st.empty()
 
 
 
