@@ -64,9 +64,9 @@ with col1:
       st.write(fig_sc_hist)
 
 with col2:
-
-  st.subheader('■ Correlation Matrix')
-  st.write(fig_corr_matrix)
+  if uploaded_file is not None:
+    st.subheader('■ Correlation Matrix')
+    st.write(fig_corr_matrix)
 
 
 
