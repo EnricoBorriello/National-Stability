@@ -25,12 +25,17 @@ uploaded_file = st.sidebar.file_uploader("Choose a file")
 col1, col2 = st.columns([1,1])
 
 
+features_columns = ['triad_'+("%02d" % (number,)) for number in range(1,14)]
+
+
 with col1:
 
   if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
+    m0 = len(df)
     #remove rows with NaN values
     df = df.dropna(axis=0)
+    m1 = len(df)
     st.subheader('◼ Raw data')
     st.write("**Note:** Rows with NaN entries have been removed.")
     st.write(df)
@@ -40,6 +45,25 @@ with col1:
   else:
     st.sidebar.info('Upload a CSV file')
 
+
+
+# Remove countries with zero triad counts?
+if uploaded_file is not None:
+  tf = st.sidebar.selectbox('Remove countries with zero entries:',
+    [True,False],index = 1)
+  if tf == True:
+    for column in features_columns:
+      df = df[df[column]!=0]
+    m2 = len(df)
+
+if uploaded_file is not None:
+  st.sidebar.write(str(m0) +' initial countries')
+  st.sidebar.write(str(m1)+' countries after removing NaN entries')
+  if tf == True:
+    st.sidebar.write(str(m2)+' countries after removing zero entries')
+
+
+with col1:
 
   # CORRELATION MATRIX
   if uploaded_file is not None:
@@ -53,8 +77,10 @@ with col1:
     variables = np.array(df.columns)
     with col2:
       st.subheader('◼ Correlation/Histogram')
-      var1 = st.selectbox('feature 1',variables)
-      var2 = st.selectbox('feature 2',variables)
+      var1 = st.selectbox('feature 1',variables,index=14)
+      # index 14 is triad_13
+      var2 = st.selectbox('feature 2',variables,index=17)
+      # index 17 is wgi.stability
     fig_sc_hist, ax = plt.subplots()
     if var1 == var2:
         sb.histplot(df, x = var1)
@@ -71,12 +97,14 @@ with col2:
 
 
 
+st.markdown("--" * 34) 
+
+
 if uploaded_file is not None:
-  st.header('Regressions')
+  st.header('Linear Regression')
 
 
 col1, col2 = st.columns([1,1])
-
 
 
 # LINEAR REGRESSION
@@ -84,54 +112,59 @@ if uploaded_file is not None:
 
   # select measure to predict
   with col1:
-    st.subheader('◼ Linear Regression')
+    
     measure = st.selectbox(
-      'Select the measure to predict',
+      'Predicted measure:',
       ('wgi.corrupt','wgi.govt',
         'wgi.stability','wgi.regulatory',
-        'wgi.law','wgi.voice')
+        'wgi.law','wgi.voice'),
+      index = 2 # index 2 = wgi.stability
       )
 
   # select features to use
-  features_columns = ['triad_'+("%02d" % (number,)) for number in range(1,14)]
-  y = np.array(df[measure])
+#  features_columns = ['triad_'+("%02d" % (number,)) for number in range(1,14)]
 
-  # design matrix
-  X = np.array(df[features_columns])
-  ones = [[1]]*len(X)
-  Xd = np.hstack((ones,X));
+  with col2:
+    options = ['triad_'+("%02d" % (number,)) for number in range(1,14)]
+    features_columns = st.multiselect(
+      'Triads included:',
+      options,
+      options)
 
-  # find parameters
-  theta = np.dot(np.dot(np.linalg.inv(np.dot(Xd.T,Xd)),Xd.T),y)
+  if len(features_columns) > 0:
 
-  # preditions
-  predictions = np.dot(Xd,theta)
+    y = np.array(df[measure])
+    X = np.array(df[features_columns])
 
-  # plot
-  fig_lin_reg, ax = plt.subplots()
-  ax.grid(b=True, which='major', color='lightgray', linestyle='-')
-  ax.set_xlim((-3,3))
-  ax.set_ylim((-3,3))
-  ax.set_aspect(1)
+    from sklearn.linear_model import LinearRegression
+    model = LinearRegression()
+    model.fit(X, y)
+    predictions = model.predict(X)
 
-  plt.scatter(y,predictions,edgecolors='white',s=60)
-  plt.plot([-3,3],[-3,3],'--')
-  plt.xlabel('actual',size=12)
-  plt.ylabel('predicted',size=12)
+    # plot
+    fig_lin_reg, ax = plt.subplots()
+    ax.grid(b=True, which='major', color='lightgray', linestyle='-')
+    ax.set_xlim((-3,3))
+    ax.set_ylim((-3,3))
+    ax.set_aspect(1)
 
-  # RMSE
-  MSE = np.square(np.subtract(y,predictions)).mean() 
-  RMSE = math.sqrt(MSE)
-  plt.title(str(measure)+'      '+'RMSE = '+str(round(RMSE,3)))
+    plt.scatter(y,predictions,edgecolors='white',s=60)
+    plt.plot([-3,3],[-3,3],'--')
+    plt.xlabel('actual',size=12)
+    plt.ylabel('predicted',size=12)
+
+    # RMSE
+    MSE = np.square(np.subtract(y,predictions)).mean() 
+    RMSE = math.sqrt(MSE)
+    plt.title(str(measure)+'      '+'RMSE = '+str(round(RMSE,3)))
 
 with col1:
   if uploaded_file is not None:
-    st.write(fig_lin_reg)
+    if len(features_columns) > 0:
+      st.write(fig_lin_reg)
 
 
-with col2:
-  if uploaded_file is not None:
-    st.empty()
+
 
 
 
