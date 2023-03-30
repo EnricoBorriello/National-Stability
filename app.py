@@ -71,8 +71,8 @@ with col2:
 
 
 
-
-st.header('Regressions')
+if uploaded_file is not None:
+  st.header('Regressions')
 
 
 col1, col2 = st.columns([1,1])
